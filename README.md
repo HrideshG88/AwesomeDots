@@ -1,0 +1,2 @@
+# AwesomeDots
+Awesomewm config files
