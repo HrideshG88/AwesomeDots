@@ -33,7 +33,7 @@ require("awful.hotkeys_popup.keys")
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
     naughty.notify({ preset = naughty.config.presets.critical,
-                     title = "Oops, there were errors during startup!",
+                     title = "FUCK, there were errors during startup!",
                      text = awesome.startup_errors })
 end
 
@@ -94,7 +94,6 @@ awful.layout.layouts = {
     -- awful.layout.suit.corner.se,
 }
 -- }}}
-
 -- {{{ Menu
 -- Create a launcher widget and a main menu
 myawesomemenu = {
@@ -104,8 +103,14 @@ myawesomemenu = {
    { "restart", awesome.restart },
    { "quit", function() awesome.quit() end },
 }
+-- theme the menu
+beautiful.menu_fg_focus = xrdb.color1
+beautiful.menu_bg_focus = xrdb.color12
+-- beautiful.menu_fg_normal = xrdb.color0
+-- beautiful.menu_bg_normal = xrdb.color0
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon 
+},
                                     { "open terminal", terminal }
                                   }
                         })
@@ -241,7 +246,11 @@ end
         --  mylauncher,
             s.mytaglist,
             s.mypromptbox,
-            s.mytasklist,
+	    {
+		s.mytasklist,
+	    	force_width = 100,
+        	layout = wibox.container.place
+	     }
         },
 	 -- Middle widget
 	      {
@@ -253,11 +262,15 @@ end
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             wibox.widget.systray(),
+	    {
 	    mpdarc_widget,
-	    todo_widget(),
+	    force_width = 250,
+            layout = wibox.container.place
+    	    },
 	    volume_widget{
             widget_type = 'arc'
         },
+	    todo_widget(),
             s.mylayoutbox,
         },
     }
