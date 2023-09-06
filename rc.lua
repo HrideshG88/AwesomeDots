@@ -6,8 +6,15 @@ pcall(require, "luarocks.loader")
 local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
+-- Theme
+local xresources = require("beautiful.xresources")
+local xrdb = xresources.get_current_theme()
+local dpi = xresources.apply_dpi
 -- Widget and layout library
 local wibox = require("wibox")
+local mpdarc_widget = require("awesome-wm-widgets.mpdarc-widget.mpdarc")
+local todo_widget = require("awesome-wm-widgets.todo-widget.todo")
+local volume_widget = require('awesome-wm-widgets.pactl-widget.volume')
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -19,8 +26,8 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 require("awful.hotkeys_popup.keys")
 
 --{{{ Autostart
-awful.util.spawn("newq")
-
+--awful.util.spawn("")
+--awful.spawn.with_shell("")
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -39,7 +46,7 @@ do
         in_error = true
 
         naughty.notify({ preset = naughty.config.presets.critical,
-                         title = "Oops, an error happened!",
+                         title = "FUCK, an error happened!",
                          text = tostring(err) })
         in_error = false
     end)
@@ -50,12 +57,14 @@ end
 -- Themes define colours, icons, font and wallpapers.
 --local dpi = beautiful.xresources.apply_dpi
 beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
+-- beautiful.init(gears.filesystem.get_configuration_dir() .. "theme.lua")
 beautiful.useless_gap = 3
+
 
 -- This is used later as the default terminal and editor to run.
 terminal = "alacritty"
 browser = "firefox"
-editor = os.getenv("EDITOR") or "vim"
+editor = os.getenv("EDITOR") or "nvim"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -67,20 +76,20 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-    --awful.layout.suit.floating,
     awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
+   -- awful.layout.suit.tile.left,
+    --awful.layout.suit.tile.bottom,
+    --awful.layout.suit.tile.top,
+    --awful.layout.suit.fair,
+   -- awful.layout.suit.fair.horizontal,
     awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
+    --awful.layout.suit.spiral.dwindle,
     awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
+    --awful.layout.suit.max.fullscreen,
     awful.layout.suit.magnifier,
     awful.layout.suit.corner.nw,
     -- awful.layout.suit.corner.ne,
+    awful.layout.suit.floating,
     -- awful.layout.suit.corner.sw,
     -- awful.layout.suit.corner.se,
 }
@@ -178,7 +187,10 @@ awful.screen.connect_for_each_screen(function(s)
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
-    s.mypromptbox = awful.widget.prompt()
+    s.mypromptbox = awful.widget.prompt {
+	fg = xrdb.color1,
+	bg = xrdb.color0
+    }
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     s.mylayoutbox = awful.widget.layoutbox(s)
@@ -187,22 +199,40 @@ awful.screen.connect_for_each_screen(function(s)
                            awful.button({ }, 3, function () awful.layout.inc(-1) end),
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+
+local new_shape = function(cr, width, height)
+	gears.shape.rounded_rect(cr, 900, 20, 3)
+end
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen  = s,
         filter  = awful.widget.taglist.filter.all,
-        buttons = taglist_buttons
+        buttons = taglist_buttons,
+	style = {
+		shape = new_shape,
+		fg_focus = xrdb.color12,
+		bg_focus = xrdb.color9,
+		fg_urgent = xrdb.color6,
+		bg_urgent = xrdb.color1,
+	},
     }
 
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist {
         screen  = s,
         filter  = awful.widget.tasklist.filter.currenttags,
-        buttons = tasklist_buttons
+        buttons = tasklist_buttons,
+	style = {
+		shape = new_shape,
+		fg_focus = xrdb.color12,
+		bg_focus = xrdb.color9,
+		fg_urgent = xrdb.color6,
+		bg_urgent = xrdb.color1,
+    },
     }
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s })
+    s.mywibox = awful.wibar({ position = "top", screen = s, opacity = 0.5,  height = 20, fg = xrdb.color1, bg = xrdb.color0})
 
     -- Add widgets to the wibox
     s.mywibox:setup {
@@ -212,12 +242,18 @@ awful.screen.connect_for_each_screen(function(s)
         --  mylauncher,
             s.mytaglist,
             s.mypromptbox,
+            s.mytasklist,
         },
-        s.mytasklist, -- Middle widget
+	 -- Middle widget
+	    mpdarc_widget,
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             wibox.widget.systray(),
+	    todo_widget(),
             mytextclock,
+	    volume_widget{
+            widget_type = 'arc'
+        },
             s.mylayoutbox,
         },
     }
@@ -255,8 +291,8 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
-              {description = "show main menu", group = "awesome"}),
+    --awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
+      --        {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
@@ -291,9 +327,10 @@ globalkeys = gears.table.join(
 
 
 
-    awful.key({ modkey,           }, "q", function () awful.spawn.with_shell("newq") end,
-              {description = "newq", group = "launcher"}),
-   
+    awful.key({ modkey,           }, "q", function () awful.spawn.with_shell("newq -s")       end,
+              {description = "newq select wallpaper", group = "launcher"}),
+    awful.key({ modkey,           }, "t", function () awful.spawn.with_shell("newq -r")       end,
+              {description = "newq random wallpaper", group = "launcher"}),
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
               {description = "increase master width factor", group = "layout"}),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)          end,
@@ -324,21 +361,22 @@ globalkeys = gears.table.join(
               {description = "restore minimized", group = "client"}),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
+    awful.key({ modkey },            "p",     function () awful.screen.focused().mypromptbox:run() end,
               {description = "run prompt", group = "launcher"}),
 
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run {
                     prompt       = "Run Lua code: ",
---                    textbox      = awful.screen.focused().mypromptbox.widget,
+                    --textbox      = awful.screen.focused().mypromptbox.widget,
+		    with_shell   = true,
                     exe_callback = awful.util.eval,
                     history_path = awful.util.get_cache_dir() .. "/history_eval"
                   }
               end,
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
-    awful.key({ modkey }, "p", function() menubar.show() end,
+    awful.key({ modkey }, "r", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"})
 )
 
@@ -479,15 +517,8 @@ awful.rules.rules = {
         },
         class = {
           "Arandr",
-          "Blueman-manager",
-          "Gpick",
-          "Kruler",
-          "MessageWin",  -- kalarm.
-          "Sxiv",
           "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
-          "Wpa_gui",
-          "veromix",
-          "xtightvncviewer"},
+          },
 
         -- Note that the name property shown in xprop might be set slightly after creation of the client
         -- and the name shown there might not match defined rules here.
@@ -572,6 +603,6 @@ client.connect_signal("mouse::enter", function(c)
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+client.connect_signal("focus", function(c) c.border_color = xrdb.color1 end)
+client.connect_signal("unfocus", function(c) c.border_color = xrdb.color0 end)
 -- }}}
