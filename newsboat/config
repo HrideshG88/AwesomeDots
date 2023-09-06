@@ -8,7 +8,8 @@ color listfocus_unread    black   yellow underline
 color info                default red
 color article             default default
 
-highlight all "===.*===" default
+#highlight all "===.*===" default
+#highlight all "+++.*+++" default
 highlight feedlist ".*(0/0))" black
 highlight article "(^Feed:.*|^Title:.*|^Author:.*)" cyan default bold
 highlight article "(^Link:.*|^Date:.*)" default default
