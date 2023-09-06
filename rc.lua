@@ -123,7 +123,6 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
-
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
                     awful.button({ }, 1, function(t) t:view_only() end),
@@ -245,12 +244,17 @@ end
             s.mytasklist,
         },
 	 -- Middle widget
-	    mpdarc_widget,
+	      {
+        mytextclock,
+        valign = "center",
+        halign = "center",
+        layout = wibox.container.place
+    	},
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             wibox.widget.systray(),
+	    mpdarc_widget,
 	    todo_widget(),
-            mytextclock,
 	    volume_widget{
             widget_type = 'arc'
         },
