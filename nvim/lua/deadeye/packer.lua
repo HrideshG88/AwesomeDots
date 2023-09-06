@@ -56,4 +56,16 @@ use {
     {'L3MON4D3/LuaSnip'},     -- Required
   }
 }
+use({
+  "epwalsh/obsidian.nvim",
+  requires = {
+    -- Required.
+    "nvim-lua/plenary.nvim",
+ },
+  config = function()
+   require("obsidian").setup({
+      dir = "~/hack/knowledgebase",
+    })
+  end,
+})
 end)
