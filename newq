@@ -33,5 +33,6 @@ options "$@"
 pywalfox update;
 cd && ./alacrittypywal.sh >/dev/null 2>&1 ; 
 cp .cache/wal/colors.Xresources $HOME/.Xresources
+awesome-client 'awesome.restart()' >/dev/null 2>&1
 cd misc/ChromiumPywal/ && ./generate-theme.sh
 cd
