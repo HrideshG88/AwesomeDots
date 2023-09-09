@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export FZF_DEFAULT_OPTS="
+	--cycle \
+	--border double" 
+	

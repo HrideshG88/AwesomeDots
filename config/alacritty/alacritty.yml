@@ -1,0 +1,101 @@
+#Alacritty:
+
+env:
+  TERM: alacritty
+
+window:
+  opacity: 1.0
+  padding:
+    x: 25
+    y: 25
+
+    dynamic_padding: true
+    decoration: none
+
+scrolling:
+  history: 10000
+
+font:
+  normal:
+    family: SpaceMonoNerdFont 
+    style: regular 
+
+size: 15
+
+colors:
+  # Default colors
+  primary:
+    background: '#000000'
+    foreground: '#ffffff'
+  cursor:
+    text: '#F81CE5'
+    cursor: '#ffffff'
+
+  # Normal colors
+  normal:
+    black: '#000000'
+    red: '#fe0100'
+    green: '#33ff00'
+    yellow: '#feff00'
+    blue: '#0066ff'
+    magenta: '#cc00ff'
+    cyan: '#00ffff'
+    white: '#d0d0d0'
+
+  # Bright colors
+  bright:
+    black: '#808080'
+    red: '#fe0100'
+    green: '#33ff00'
+    yellow: '#feff00'
+    blue: '#0066ff'
+    magenta: '#cc00ff'
+    cyan: '#00ffff'
+    white: '#FFFFFF'
+
+# cursor:
+#   style: Underline
+#   unfocused_hollow: false
+live_config_reload: true
+
+key_bindings:
+
+  - { key: Key0, mods: Control, action: ResetFontSize }
+
+  - { key: Equals, mods: Control, action: IncreaseFontSize }
+
+  - { key: Minus, mods: Control, action: DecreaseFontSize }
+draw_bold_text_with_bright_colors: true
+theme: Hyper
+# SHELL 
+
+#shell:
+#  program: /sbin/nu
+
+# BEGIN ACE
+colors:
+  primary:
+    background: '#0e0f17'
+    foreground: '#e4d1ef'
+  cursor:
+    text:       '#0e0f17'
+    cursor:     '#e4d1ef'
+  normal:
+    black:      '#0e0f17'
+    red:        '#6C688A'
+    green:      '#9A759A'
+    yellow:     '#7097B8'
+    blue:       '#F09EA2'
+    magenta:    '#AAB2CF'
+    cyan:       '#DBB4EF'
+    white:      '#e4d1ef'
+  bright:
+    black:      '#9f92a7'
+    red:        '#6C688A'
+    green:      '#9A759A'
+    yellow:     '#7097B8'
+    blue:       '#F09EA2'
+    magenta:    '#AAB2CF'
+    cyan:       '#DBB4EF'
+    white:      '#e4d1ef'
+# END ACE
