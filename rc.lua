@@ -309,6 +309,14 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
+     -- bind PrintScrn to capture a screenshot
+  awful.key(
+     {},
+     "Print",
+     function()
+         awful.spawn("flameshot gui")
+    end
+  ),
     --awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
       --        {description = "show main menu", group = "awesome"}),
 
