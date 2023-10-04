@@ -1,0 +1,3 @@
+#!/bin/bash
+
+shred -vfuzn5 $(ls | fzf)
