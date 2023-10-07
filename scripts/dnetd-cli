@@ -1,0 +1,51 @@
+#!/bin/bash
+echo -e "Play \033[1m The Darknet Diaries \033[0m from the Terminal" 
+
+#OPTIONS
+usage() {
+	echo "USAGE: "
+	echo "-h Display this help  "
+	echo "-v Display version "
+	echo "-r Refresh data for new episodes"
+
+}
+options() {
+while getopts "rvsh:" flag
+do
+	case "$flag" in
+		v)
+			echo "v1.0" && exit;;
+		r)
+			curl -s https://feeds.megaphone.fm/darknetdiaries | grep -E '(<description>|<title>|<enclosure url=)' > $HOME/.local/share/dndiaries/dnd_data.txt && echo "Updated data!!" 
+			exit ;;
+		h)
+			usage ;;
+		?)
+			usage && exit 1 ;;		
+	esac
+done
+}
+options "$@"
+
+#CHECKING FOR DEPEDENCIES
+printf "Checking dependencies.... "
+dependencies=( "mpv" "curl" "fzf" "grep" "sed" )
+for d in "${dependencies[@]}"
+do
+    [[ $(command -v "$d" 2>/dev/null) ]] || { echo -en "\n$d needs to be installed.";deps=1; }
+done
+[[ $deps -ne 1 ]] && echo "OK" || { echo -en "\nInstall dependencies for 100x better luck.\n";exit 1; }
+
+#Streaming
+if [[ ! -d $HOME/.local/share/dndiaries/ ]] ; then 
+	mkdir -p $HOME/.local/share/dndiaries/
+fi
+
+if [[ ! -f $HOME/.local/share/dndiaries/dnd_data.txt ]] ; then 
+	curl -s https://feeds.megaphone.fm/darknetdiaries | grep -E '(<description>|<title>|<enclosure url=)' > $HOME/.local/share/dndiaries/dnd_data.txt && echo "Updated data!!" 
+fi
+epname=$(cat $HOME/.local/share/dndiaries/dnd_data.txt | grep -P "(?=<title>*)" | sed -e 's/<[^>]*>//g' -e 's/^[[:blank:]]*//' -e '/^Darknet/d' | fzf) 
+echo -e "playing Episode: \033[1m $epname \033[0m"
+grep -A1 "$epname" $HOME/.local/share/dndiaries/dnd_data.txt | grep -E '<description>'| sed -e 's/<[^>]*>//g'
+mpv --really-quiet `grep -A2 "$epname" $HOME/.local/share/dndiaries/dnd_data.txt | grep -Po "(?<=enclosure url=\")[^\?][^\"]*"`
+notify-send "Playing Episode $epname"
