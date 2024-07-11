@@ -1,0 +1,68 @@
+--local lsp = require("lsp-zero").preset({})
+--
+--lsp.on_attach(function(client, bufnr)
+--	-- see :help lsp-zero-keybindings
+--	-- to learn the available actions
+--	vim.keymap.set("n", "gr", require("telescope.builtin").lsp_references, {})
+--	lsp.default_keymaps({ buffer = bufnr })
+--end)
+--
+---- (Optional) Configure lua language server for neovim
+----
+--require("mason").setup({})
+--require("mason-lspconfig").setup({
+--	ensure_installed = {
+--		"bashls",
+--		"rust_analyzer",
+--		"denols",
+--		"jqls",
+--		"ltex",
+--		"lemminx",
+--		"tsserver",
+--		"marksman",
+--		"html",
+--		"solidity",
+--		"solidity_ls_nomicfoundation",
+--	},
+--	handlers = {
+--		lsp.default_setup,
+--		lua_ls = function()
+--			local lua_opts = lsp.nvim_lua_ls()
+--			require("lspconfig").lua_ls.setup(lua_opts)
+--		end,
+--
+--		-- solidity hardhat setup
+--		--solidity_ls_nomicfoundation = lsp.noop,
+--		--	require("lspconfig").solidity_ls_nomicfoundation.setup({
+--		--		cmd = { "nomicfoundation-solidity-language-server", "--stdio" },
+--		--		filetypes = { "solidity" },
+--		--		root_dir = lsp.utils.find_git_ancestor,
+--		--		single_file_support = true,
+--		--	})
+--		--end,
+--	},
+--})
+--
+--local cmp = require("cmp")
+--cmp.setup({
+--	mapping = cmp.mapping.preset.insert({
+--		["<C-b>"] = cmp.mapping.scroll_docs(-4),
+--		["<C-f>"] = cmp.mapping.scroll_docs(4),
+--		["<C-Space>"] = cmp.mapping.complete(),
+--		["<C-e>"] = cmp.mapping.abort(),
+--		["<CR>"] = cmp.mapping.confirm({ select = true }),
+--	}),
+--	snippet = {
+--		expand = function(args)
+--			require("luasnip").lsp_expand(args.body)
+--		end,
+--	},
+--	sources = cmp.config.sources({
+--		{ name = "luasnip" },
+--		{ name = "friendly_snippets" },
+--	}, {
+--		{ name = "buffer" },
+--	}),
+--})
+--
+--require("luasnip.loaders.from_vscode").lazy_load()
